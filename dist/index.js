@@ -154,6 +154,10 @@ var Swipeout = (0, _createReactClass2.default)({
     };
   },
 
+  _onMoveShouldSetPanResponder: function _onMoveShouldSetPanResponder(event, gestureState) {
+    return Math.abs(gestureState.dx) > this.props.sensitivity;
+  },
+
   componentWillMount: function componentWillMount() {
     var _this = this;
 
@@ -161,21 +165,18 @@ var Swipeout = (0, _createReactClass2.default)({
       onStartShouldSetPanResponder: function onStartShouldSetPanResponder(event, gestureState) {
         return true;
       },
-      onStartShouldSetPanResponderCapture: function onStartShouldSetPanResponderCapture(event, gestureState) {
-        return _this.state.openedLeft || _this.state.openedRight;
+      onMoveShouldSetPanResponder: function onMoveShouldSetPanResponder(event, gestureState) {
+        return _this._onMoveShouldSetPanResponder(event, gestureState);
       },
       onMoveShouldSetPanResponderCapture: function onMoveShouldSetPanResponderCapture(event, gestureState) {
-        return Math.abs(gestureState.dx) > _this.props.sensitivity && Math.abs(gestureState.dy) <= _this.props.sensitivity;
+        return _this._onMoveShouldSetPanResponder(event, gestureState);
       },
       onPanResponderGrant: this._handlePanResponderGrant,
       onPanResponderMove: this._handlePanResponderMove,
       onPanResponderRelease: this._handlePanResponderEnd,
       onPanResponderTerminate: this._handlePanResponderEnd,
       onShouldBlockNativeResponder: function onShouldBlockNativeResponder(event, gestureState) {
-        return false;
-      },
-      onPanResponderTerminationRequest: function onPanResponderTerminationRequest() {
-        return false;
+        return true;
       }
     });
   },

@@ -137,22 +137,25 @@ const Swipeout = createReactClass({
     };
   },
 
+  _onMoveShouldSetPanResponder: function(event, gestureState) {
+    return Math.abs(gestureState.dx) > this.props.sensitivity;
+  },
+
   componentWillMount: function() {
     this._panResponder = PanResponder.create({
       onStartShouldSetPanResponder: (event, gestureState) => true,
-      onStartShouldSetPanResponderCapture: (event, gestureState) =>
-        this.state.openedLeft || this.state.openedRight,
+      onMoveShouldSetPanResponder: (event, gestureState) =>
+        this._onMoveShouldSetPanResponder(event, gestureState),
       onMoveShouldSetPanResponderCapture: (event, gestureState) =>
-        Math.abs(gestureState.dx) > this.props.sensitivity &&
-        Math.abs(gestureState.dy) <= this.props.sensitivity,
+        this._onMoveShouldSetPanResponder(event, gestureState),
       onPanResponderGrant: this._handlePanResponderGrant,
       onPanResponderMove: this._handlePanResponderMove,
       onPanResponderRelease: this._handlePanResponderEnd,
       onPanResponderTerminate: this._handlePanResponderEnd,
-      onShouldBlockNativeResponder: (event, gestureState) => false,
-      onPanResponderTerminationRequest: () => false,
+      onShouldBlockNativeResponder: (event, gestureState) => true,
     });
   },
+
 
   componentWillReceiveProps: function(nextProps) {
     if (nextProps.close) this._close();
@@ -309,11 +312,11 @@ const Swipeout = createReactClass({
       }, () => {
         this._tweenContent('contentPos', -this.state.btnsRightWidth);
         this._callOnOpen();
-        this.setState({ 
-          contentPos: -this.state.btnsRightWidth, 
-          openedLeft: false, 
-          openedRight: true, 
-          swiping: false 
+        this.setState({
+          contentPos: -this.state.btnsRightWidth,
+          openedLeft: false,
+          openedRight: true,
+          swiping: false
         });
       });
     });
@@ -327,11 +330,11 @@ const Swipeout = createReactClass({
       }, () => {
         this._tweenContent('contentPos', this.state.btnsLeftWidth);
         this._callOnOpen();
-        this.setState({ 
-          contentPos: this.state.btnsLeftWidth, 
-          openedLeft: true, 
-          openedRight: false, 
-          swiping: false 
+        this.setState({
+          contentPos: this.state.btnsLeftWidth,
+          openedLeft: true,
+          openedRight: false,
+          swiping: false
         });
       });
     });
